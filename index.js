@@ -1,4 +1,4 @@
-import { getNonce, obj2xml } from "./lib/Scram.js";
+import { getNonce, obj2xml } from "./lib/Utils.js";
 
 var username = "user";
 
