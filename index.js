@@ -1,13 +1,3 @@
-import { getNonce, obj2xml } from "./lib/Utils.js";
+import { request_challenge } from "./app.js";
 
-var username = "user";
-
-var firstnonce = getNonce(32);
-var body = obj2xml({
-    request: {
-        username,
-        firstnonce,
-        mode: 1 // For RSA
-    }
-})
-console.log(body);
+await request_challenge("user")
