@@ -1,4 +1,13 @@
-import CryptoJs from 'crypto-js';
+import { getNonce, obj2xml } from "./lib/Scram.js";
 
-var test = CryptoJs.lib.WordArray.random(10);
-console.log(test)
+var username = "user";
+
+var firstnonce = getNonce(32);
+var body = obj2xml({
+    request: {
+        username,
+        firstnonce,
+        mode: 1 // For RSA
+    }
+})
+console.log(body);
