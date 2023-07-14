@@ -37,7 +37,9 @@ export const request_challenge = async (username) => {
 
     logger.debug(request, "Login Challenge Request - REQUEST")
     const response = await apiConnection.request(request)
-    logger.debug({ status: response.status, headers: response.headers, data: response.data }, "Login Challenge - RESPONSE");
+    const output = { status: response.status, headers: response.headers, data: response.data };
+    logger.debug(output, "Login Challenge - RESPONSE");
+    return output;
 }
 
 export const get_tokens = async (url) => {
