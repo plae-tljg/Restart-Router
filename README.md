@@ -20,18 +20,9 @@
 6. Send a **GET** request to `http://192.168.8.1` to get the **CSRF Verification Tokens**. Which will be on `<meta name="csrf_token" content="TOKEN_HERE"/>` tags.  They are stored in `g_requestVerificationToken` variable. That is extracted and stored on that global variable using `getAjaxToken()` method. <sub><sup>There is also another way to get that token by sending a req to `/api/webserver/token` But that didn't work. Maybe I did something wrong. However I got a way to get those two tokens.</sup></sub> That token will be used as a header ( called `__RequestVerificationToken` ) to send the next request
 7. Send a POST request to `http://192.168.8.1/api/user/challenge_login` An example,
 
-		Host: 192.168.8.1
-		User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0
-		Accept: */*
-		Accept-Language: en-US,en;q=0.5
-		Accept-Encoding: gzip, deflate
-		Content-Type: application/x-www-form-urlencoded; charset=UTF-8
 		__RequestVerificationToken:O+E48sSn5Iv/fF6h/Oq8xyt45qfC8bqc
-		X-Requested-With: XMLHttpRequest
-		Content-Length: 185
-		Origin: http://192.168.8.1
-		Connection: keep-alive
-		Referer: http://192.168.8.1/html/home.html
+		Cookie: SessionID=WbYm0d/Q0CtukdNeqo4KqUiP6zsaL4uwIwKPhJS1SFplMNzdey6VxYA+C0RPBchhHbmvzL/TNap58OdxIh6bXqfZNIyFFBtF29g0JKy/X+oZpCegwbvscLimbeus3eTl
+
 	And our response should look like so, **Also response header should also contain `__RequestVerificationToken` value, this will be needed in the next request that is to be sent**
 
 		<?xml version="1.0" encoding="UTF-8"?>
@@ -89,18 +80,8 @@
 11. Next the headers for that request, `__RequestVerificationToken` for this request will be the **response** `__RequestVerificationToken` header value of the previous request. i.e. **Response** for the **POST** `http://192.168.8.1/api/user/challenge_login` request's header contains another `__RequestVerificationToken` value. That value should be the `__RequestVerificationToken` header value for the next **POST** request to `http://192.168.8.1/api/user/authentication_login` 
 So, the headers for this **POST** request will be like this,
 
-		Host:192.168.8.1
-		User-Agent:Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0
-		Accept:*/*
-		Accept-Language:en-US,en;q=0.5
-		Accept-Encoding:gzip, deflate
-		Content-Type:application/x-www-form-urlencoded; charset=UTF-8
 		__RequestVerificationToken:KR6+2PBV10yNdP5IA611ZKDOW4MzoqyA
-		X-Requested-With:XMLHttpRequest
-		Content-Length:269
-		Origin:http://192.168.8.1
-		Connection:keep-alive
-		Referer:http://192.168.8.1/html/home.html
+		Cookie: SessionID=WbYm0d/Q0CtukdNeqo4KqUiP6zsaL4uwIwKPhJS1SFplMNzdey6VxYA+C0RPBchhHbmvzL/TNap58OdxIh6bXqfZNIyFFBtF29g0JKy/X+oZpCegwbvscLimbeus3eTl
 
 	And the **BODY** for this request should look like this (same as above),
 
@@ -119,7 +100,7 @@ So, the headers for this **POST** request will be like this,
 			<rsae>010001</rsae>
 		</response>
 
-12. Then that `xml` is converted into a object (let's take it as `ret`) and some verifications are done. They are,
+12. Then that `xml` is converted into a object (let's take it as `ret`) and some verifications are done. These are confirmations. They are,
 
 		var serverProof = scram.serverProof(psd, g_scarm_salt, iter, authMsg).toString();
 		if (ret.response.serversignature == serverProof) {
@@ -161,9 +142,12 @@ So, the headers for this **POST** request will be like this,
 		</response>
 	As you can see, the second response looks like that of a authenticated request. Because it contains `user` as the `<Username/>` value and the `state` is `0`. Also, when logged into the router all the requests that made to that endpoint looks like that, and when not logged in, all the responses made to that endpoint looks like the first one.
 
-14. To restart the router, a **POST** request is sent to `http://192.168.8.1/api/device/control` with headers as,
+14. Then to restart the Router, we will have to send a POST request to `http://192.168.8.1/api/device/control` and attach Cookie and a new CSRF Token in that requset. To get those two, we need to send a request to `http://192.168.8.1/html/reboot.html` and get the Cookie and the CSRF token as previously. i.e. This **GET** request will contain a **Set-Cookie** header which contains the cookie and the **meta** tag contains the CSRF token.
+    
+15. To restart the router, a **POST** request is sent to `http://192.168.8.1/api/device/control`, 
 
-		sa
+		__RequestVerificationToken:KR6+2PBV10yNdP5IA611ZKDOW4MzoqyA
+		Cookie: SessionID=WbYm0d/Q0CtukdNeqo4KqUiP6zsaL4uwIwKPhJS1SFplMNzdey6VxYA+C0RPBchhHbmvzL/TNap58OdxIh6bXqfZNIyFFBtF29g0JKy/X+oZpCegwbvscLimbeus3eTl
 
 	And body as,
 
