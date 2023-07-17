@@ -1,6 +1,4 @@
-1. Validate Username & Password
-2. Get Scram `var scram = CryptoJS.SCRAM()`
-3. Get Nonce `var nonce = scram.nonce().toStirng()`
+1. Generate Nonce of 256 bits
 4. Generate Object as
 
 		{
@@ -156,3 +154,8 @@ So, the headers for this **POST** request will be like this,
 		<request>
 			<Control>1</Control>
 		</request>
+
+	And the Response should be like,
+
+		<?xml version="1.0" encoding="UTF-8"?>
+		<response>OK</response>
