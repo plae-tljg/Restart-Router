@@ -92,10 +92,12 @@ export const request_challenge = async (username) => {
         data
     }
 
+    logger.info("Requested Login Challenge")
     logger.debug(request, "Login Challenge Request - REQUEST")
     const response = await apiConnection.request(request)
     const output = { status: response.status, headers: response.headers, data: response.data, firstnonce, cookies };
     logger.debug(output, "Login Challenge - RESPONSE");
+    logger.info("Got Login Challenge")
     return output;
 }
 
@@ -121,6 +123,7 @@ export const authentication_login = async (salt, iterations, serverNonce, firstn
         data
     }
 
+    logger.info("Send Server Challenge Request")
     logger.debug(request, "Request Server Challenge - REQUEST")
     const response = await apiConnection.request(request)
 
@@ -133,6 +136,7 @@ export const authentication_login = async (salt, iterations, serverNonce, firstn
         auth_cookies: setCookies.length > 0 ? setCookies.map(cookie => cookie.split(";")[0] + ";") : null
     };
     logger.debug(output, "Request Server Challenge - RESPONSE");
+    logger.info("Got Server Challenge Response")
     return output;
 }
 
@@ -145,6 +149,7 @@ export const send_restart = async (auth_cookies) => {
     })
     logger.debug(csrf_tokens, "CSRF Tokens")
     logger.debug(cookies, "Cookies")
+    logger.info("Got Tokens")
 
     const data = obj2xml({
         request: {
@@ -162,8 +167,10 @@ export const send_restart = async (auth_cookies) => {
         data
     }
 
+    logger.info("Send Restart Request")
     logger.debug(request, "Restart Request - REQUEST")
     const response = await apiConnection.request(request)
     const output = { status: response.status, headers: response.headers, data: response.data };
     logger.debug(output, "Restart - RESPONSE");
+    logger.info("Got Restart Response")
 }

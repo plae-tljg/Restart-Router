@@ -1,3 +1,11 @@
+# Introduction
+This is a pet project of mine, Goal was to analyze how the reboot function on the Router's setting works and replicate it so that I can restart the router with a click of a button, through my phone or heck even a shortcut? 
+
+And before you think, yes, I do restart my router that often (roughly 5 times a day), Because my Internet sucks that much and I'm too lazy to walk to the router or log in to it and then restart it, which takes at least 10 button clicks and 2 minutes of my time.
+
+And this is tested for ***Huawei B310s - 925*** router.
+
+# How It Works
 1. Generate Nonce of 256 bits
 4. Generate Object as
 
