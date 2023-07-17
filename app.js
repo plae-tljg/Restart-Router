@@ -33,6 +33,7 @@ const getClientKey = (saltedPassword) => {
     return CryptoConfig.hmac(saltedPassword, "Client Key")
 }
 
+// Needed for verification of the server
 const getServerKey = (saltedPassword) => {
     return CryptoConfig.hmac(saltedPassword, "Server Key")
 }
