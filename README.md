@@ -1,3 +1,5 @@
+This is an ongoing project
+
 # Introduction
 This is a pet project of mine, Goal was to analyze how the reboot function on the Router's setting works and replicate it so that I can restart the router with a click of a button, through my phone or heck even a shortcut? 
 
