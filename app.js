@@ -2,7 +2,7 @@ import axios from "axios";
 import CryptoJs from 'crypto-js';
 import { obj2xml } from "./lib/Utils.js";
 import { parse } from 'node-html-parser';
-import logger from "./lib/Logger.js";
+import logger from "./lib/logger.js";
 
 const apiConnection = axios.create({
     baseURL: `http://192.168.8.1`,
@@ -58,10 +58,11 @@ const get_tokens = async (url, headers = null) => {
         const csrfMetaElements = root.querySelectorAll('meta[name="csrf_token"]');
         return {
             csrf_tokens: csrfMetaElements.map( el => el.getAttribute('content') ),
-            cookies: setCookies.length > 0 ? setCookies.map(cookie => cookie.split(";")[0] + ";") : null
+            cookies: setCookies && setCookies.length > 0 ? setCookies.map(cookie => cookie.split(";")[0] + ";") : null
         }
     } catch (error) {
         logger.error(error)
+        return null
     }
 }
 
@@ -144,9 +145,16 @@ export const send_restart = async (auth_cookies) => {
     logger.info("Start Restart Request")
 
     logger.info("Getting CSRF Tokens")
-    const { csrf_tokens, cookies } = await get_tokens('/html/reboot.html', { 
+    const tokensResult = await get_tokens('/html/reboot.html', { 
         Cookie: auth_cookies.join(" ")
     })
+    
+    if (!tokensResult) {
+        logger.error("Failed to get tokens from reboot page")
+        return
+    }
+    
+    const { csrf_tokens, cookies } = tokensResult
     logger.debug(csrf_tokens, "CSRF Tokens")
     logger.debug(cookies, "Cookies")
     logger.info("Got Tokens")
@@ -158,7 +166,7 @@ export const send_restart = async (auth_cookies) => {
     })
     const headers = {
         __RequestVerificationToken: csrf_tokens[0],
-        Cookie: cookies.join(" ")
+        Cookie: cookies ? cookies.join(" ") : auth_cookies.join(" ")
     }
     const request = {
         url: '/api/device/control',
